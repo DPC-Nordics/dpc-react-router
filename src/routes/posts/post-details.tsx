@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import {
   ActionFunctionArgs,
+  Form,
   json,
   LoaderFunctionArgs,
   redirect,
@@ -14,6 +15,7 @@ import {
   Post,
   Comment,
   addComment,
+  deletePost,
 } from "../../service/db";
 import { formatDateTime } from "../helpers";
 
@@ -31,21 +33,28 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 export async function action({ request, params }: ActionFunctionArgs) {
   const data = await request.formData();
-
   const postId = params.id || "";
-  const name = data.get("name")?.toString().trim();
-  const value = data.get("value")?.toString().trim();
 
-  if (!postId || !name || !value)
-    return json<{ error: string }>({ error: "Missing data" });
+  if (request.method === "DELETE") {
+    await deletePost(postId);
+    return redirect("/posts");
+  }
 
-  await addComment({
-    postId,
-    name,
-    value,
-  });
+  if (request.method === "POST") {
+    const name = data.get("name")?.toString().trim();
+    const value = data.get("value")?.toString().trim();
 
-  return redirect("/posts/" + params.id);
+    if (!postId || !name || !value)
+      return json<{ error: string }>({ error: "Missing data" });
+
+    await addComment({
+      postId,
+      name,
+      value,
+    });
+
+    return redirect("/posts/" + postId);
+  }
 }
 
 export default function PostDetails() {
@@ -60,6 +69,11 @@ export default function PostDetails() {
         <time>{formatDateTime(timestamp, "@ ")}</time>
       </address>
       <p>{content}</p>
+
+      <Form method="delete">
+        <button type="submit">Delete post</button>
+      </Form>
+
       <hr />
       <section>
         <h4>Comments</h4>

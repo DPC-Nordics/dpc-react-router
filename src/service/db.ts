@@ -47,6 +47,10 @@ export async function addPost(
   return addRequest("posts", post);
 }
 
+export async function deletePost(id: string) {
+  return deleteRequest("posts", id);
+}
+
 export async function addComment(
   comment: Omit<Comment, "id" | "timestamp">
 ): Promise<Comment> {
@@ -57,6 +61,15 @@ async function addRequest(url: string, body: any) {
   return fetch(dbUrl + url, {
     method: "post",
     body: JSON.stringify({ ...body, timestamp: Date.now().valueOf() }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((res) => res.json());
+}
+
+async function deleteRequest(url: string, id: string) {
+  return fetch(dbUrl + url + "/" + id, {
+    method: "delete",
     headers: {
       "Content-Type": "application/json",
     },
