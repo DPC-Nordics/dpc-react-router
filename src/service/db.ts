@@ -17,7 +17,7 @@ export interface Comment {
 
 export type LimitedPost = Pick<Post, "id" | "title">;
 
-const dbUrl = "http://localhost:4000/";
+const dbUrl = "http://localhost:4001/";
 
 export async function getPosts(): Promise<Post[]> {
   const posts: Post[] = await (await fetch(dbUrl + "posts")).json();

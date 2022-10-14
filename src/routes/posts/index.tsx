@@ -1,7 +1,15 @@
-import { Link } from "react-router-dom";
-import { LimitedPost } from "../service/db";
+import { Link, Outlet, useLoaderData } from "react-router-dom";
+import { getPosts, Post } from "../../service/db";
+
+export async function loader() {
+  const posts = await getPosts();
+
+  return posts;
+}
 
 export default function Posts() {
+  const posts = useLoaderData() as Post[];
+
   return (
     <section className="page">
       <header>
@@ -12,14 +20,16 @@ export default function Posts() {
       <section className="column-2">
         <aside>
           <h3>List of all posts</h3>
-          <PostList posts={[]} />
+          <PostList posts={posts} />
         </aside>
+
+        <Outlet />
       </section>
     </section>
   );
 }
 
-function PostList({ posts }: { posts: LimitedPost[] }) {
+function PostList({ posts }: { posts: Post[] }) {
   if (posts.length === 0)
     return (
       <p>

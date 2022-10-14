@@ -4,7 +4,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import "./index.css";
 import Home from "./routes/home";
-import Posts from "./routes/posts";
+import Posts, { loader as postsLoader } from "./routes/posts";
+import PostsLadingPage from "./routes/posts/landing-page";
 import Root, { RootError } from "./routes/root";
 
 const router = createBrowserRouter([
@@ -20,6 +21,13 @@ const router = createBrowserRouter([
       {
         path: "posts",
         element: <Posts />,
+        loader: postsLoader,
+        children: [
+          {
+            index: true,
+            element: <PostsLadingPage />,
+          },
+        ],
       },
     ],
   },
