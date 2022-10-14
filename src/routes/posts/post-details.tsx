@@ -1,11 +1,10 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   ActionFunctionArgs,
-  Form,
   json,
   LoaderFunctionArgs,
   redirect,
-  useActionData,
+  useFetcher,
   useLoaderData,
   useRouteError,
 } from "react-router-dom";
@@ -87,11 +86,18 @@ export function PostDetailsError() {
 // Components
 
 function CommentForm() {
-  const actionData = useActionData() as { error: string };
+  const { Form, state, data: actionData } = useFetcher();
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const isLoading = state !== "idle";
+
+  useEffect(() => {
+    if (!isLoading) formRef.current?.reset();
+  }, [isLoading]);
 
   return (
-    <Form method="post">
-      <fieldset>
+    <Form method="post" ref={formRef}>
+      <fieldset disabled={isLoading}>
         <legend>Add a comment</legend>
         <label>
           Name:
