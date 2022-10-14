@@ -1,11 +1,21 @@
+import { useRef } from "react";
 import {
+  ActionFunctionArgs,
+  Form,
   json,
   LoaderFunctionArgs,
   redirect,
+  useActionData,
   useLoaderData,
   useRouteError,
 } from "react-router-dom";
-import { getPost, getPostComments, Post, Comment } from "../../service/db";
+import {
+  getPost,
+  getPostComments,
+  Post,
+  Comment,
+  addComment,
+} from "../../service/db";
 import { formatDateTime } from "../helpers";
 
 export async function loader({ params }: LoaderFunctionArgs) {
@@ -18,6 +28,25 @@ export async function loader({ params }: LoaderFunctionArgs) {
   if (!post || !post.id) throw new Error("Post not found");
 
   return json({ ...post, comments });
+}
+
+export async function action({ request, params }: ActionFunctionArgs) {
+  const data = await request.formData();
+
+  const postId = params.id || "";
+  const name = data.get("name")?.toString().trim();
+  const value = data.get("value")?.toString().trim();
+
+  if (!postId || !name || !value)
+    return json<{ error: string }>({ error: "Missing data" });
+
+  await addComment({
+    postId,
+    name,
+    value,
+  });
+
+  return redirect("/posts/" + params.id);
 }
 
 export default function PostDetails() {
@@ -36,6 +65,7 @@ export default function PostDetails() {
       <section>
         <h4>Comments</h4>
         <div className="column-2">
+          <CommentForm />
           <CommentList comments={comments} />
         </div>
       </section>
@@ -51,6 +81,44 @@ export function PostDetailsError() {
       <h2>Post Error {error.status}</h2>
       <p>{error?.statusText || error?.message}</p>
     </div>
+  );
+}
+
+// Components
+
+function CommentForm() {
+  const actionData = useActionData() as { error: string };
+
+  return (
+    <Form method="post">
+      <fieldset>
+        <legend>Add a comment</legend>
+        <label>
+          Name:
+          <br />
+          <input
+            type="text"
+            id="name"
+            name="name"
+            required
+            placeholder="Your name"
+          />
+        </label>
+        <label>
+          Comment: <br />
+          <input
+            type="text"
+            id="value"
+            name="value"
+            required
+            placeholder="Your comment here..."
+          />
+        </label>
+
+        <button type="submit">Add comment</button>
+        {actionData?.error && <p className="error">{actionData.error}</p>}
+      </fieldset>
+    </Form>
   );
 }
 

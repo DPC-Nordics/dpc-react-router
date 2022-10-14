@@ -9,6 +9,7 @@ import AddPost, { action as addPostAction } from "./routes/posts/add-post";
 import PostsLadingPage from "./routes/posts/landing-page";
 import PostDetails, {
   loader as postDetailsLoader,
+  action as postDetailsAction,
   PostDetailsError,
 } from "./routes/posts/post-details";
 import Root, { RootError } from "./routes/root";
@@ -37,6 +38,7 @@ const router = createBrowserRouter([
             element: <PostDetails />,
             errorElement: <PostDetailsError />,
             loader: postDetailsLoader,
+            action: postDetailsAction,
           },
           {
             path: "add",
