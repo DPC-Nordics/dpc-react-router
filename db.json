@@ -1,12 +1,4 @@
 {
-  "posts": [
-    {
-      "id": "1",
-      "author": "Siddhant",
-      "title": "Post 1",
-      "content": "Hello world",
-      "timestamp": 0
-    }
-  ],
+  "posts": [],
   "comments": []
 }
