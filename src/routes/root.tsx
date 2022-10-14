@@ -1,15 +1,18 @@
-import { NavLink, useRouteError } from "react-router-dom";
+import { NavLink, Outlet, useRouteError } from "react-router-dom";
 
 export default function Root() {
   return (
     <>
       <header>
-        <h1>Welcome to DPC React Router Post App</h1>
+        <h1>
+          <NavLink to="/">Welcome to DPC React Router Post App</NavLink>
+        </h1>
         <nav>
-          <NavLink to="/">Home</NavLink>
           <NavLink to="posts">Posts</NavLink>
         </nav>
       </header>
+
+      <Outlet />
     </>
   );
 }
