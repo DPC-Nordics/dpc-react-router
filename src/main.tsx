@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import Home from "./routes/home";
 import Posts, { loader as postsLoader } from "./routes/posts";
+import AddPost, { action as addPostAction } from "./routes/posts/add-post";
 import PostsLadingPage from "./routes/posts/landing-page";
 import PostDetails, {
   loader as postDetailsLoader,
@@ -36,6 +37,11 @@ const router = createBrowserRouter([
             element: <PostDetails />,
             errorElement: <PostDetailsError />,
             loader: postDetailsLoader,
+          },
+          {
+            path: "add",
+            element: <AddPost />,
+            action: addPostAction,
           },
         ],
       },
