@@ -16,6 +16,7 @@ import {
   Comment,
   addComment,
   deletePost,
+  deleteComment,
 } from "../../service/db";
 import { formatDateTime } from "../helpers";
 
@@ -36,8 +37,17 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const postId = params.id || "";
 
   if (request.method === "DELETE") {
-    await deletePost(postId);
-    return redirect("/posts");
+    const deleteType = data.get("delete-action");
+    const id = data.get("id")?.toString();
+
+    if (deleteType === "comment" && id) {
+      await deleteComment(id);
+      return redirect("/posts/" + postId);
+    }
+    if (deleteType === "post" && id) {
+      await deletePost(id);
+      return redirect("/posts");
+    }
   }
 
   if (request.method === "POST") {
@@ -59,7 +69,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
 export default function PostDetails() {
   const post = useLoaderData() as Post;
-  const { title, author, content, timestamp, comments = [] } = post;
+  const { id, title, author, content, timestamp, comments = [] } = post;
 
   return (
     <main>
@@ -71,7 +81,10 @@ export default function PostDetails() {
       <p>{content}</p>
 
       <Form method="delete">
-        <button type="submit">Delete post</button>
+        <input type="hidden" name="id" value={id} />
+        <button type="submit" name="delete-action" value="post">
+          Delete post
+        </button>
       </Form>
 
       <hr />
@@ -157,6 +170,13 @@ function CommentList({ comments }: { comments: Comment[] }) {
               <address>
                 - {name} <time>{formatDateTime(timestamp, "@ ")}</time>
               </address>
+
+              <Form method="delete">
+                <input type="hidden" name="id" value={id} />
+                <button type="submit" name="delete-action" value="comment">
+                  Delete comment
+                </button>
+              </Form>
             </small>
           </blockquote>
         </li>

@@ -57,6 +57,10 @@ export async function addComment(
   return addRequest("comments", comment);
 }
 
+export async function deleteComment(id: string) {
+  return deleteRequest("comments", id);
+}
+
 async function addRequest(url: string, body: any) {
   return fetch(dbUrl + url, {
     method: "post",
