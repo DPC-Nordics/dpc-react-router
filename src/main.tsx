@@ -6,6 +6,10 @@ import "./index.css";
 import Home from "./routes/home";
 import Posts, { loader as postsLoader } from "./routes/posts";
 import PostsLadingPage from "./routes/posts/landing-page";
+import PostDetails, {
+  loader as postDetailsLoader,
+  PostDetailsError,
+} from "./routes/posts/post-details";
 import Root, { RootError } from "./routes/root";
 
 const router = createBrowserRouter([
@@ -26,6 +30,12 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <PostsLadingPage />,
+          },
+          {
+            path: ":id",
+            element: <PostDetails />,
+            errorElement: <PostDetailsError />,
+            loader: postDetailsLoader,
           },
         ],
       },

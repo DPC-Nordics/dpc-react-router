@@ -22,8 +22,8 @@ export function RootError() {
 
   return (
     <div className="center error" style={{ flexDirection: "column" }}>
-      {error?.status && <h2>Error {error.status}</h2>}
-      {error?.statusText && <p>{error?.statusText}</p>}
+      <h2>Error {error.status}</h2>
+      <p>{error?.statusText || error?.message}</p>
     </div>
   );
 }
